@@ -172,20 +172,6 @@ def git_clone(url, dir, name, commithash=None):
     # TODO clone into temporary dir and move if successful
 
     if os.path.exists(dir):
-        if commithash is None:
-            return
-
-        current_hash = run_git(dir, name, 'rev-parse HEAD', None, f"Couldn't determine {name}'s hash: {commithash}", live=False).strip()
-        if current_hash == commithash:
-            return
-
-        if run_git(dir, name, 'config --get remote.origin.url', None, f"Couldn't determine {name}'s origin URL", live=False).strip() != url:
-            run_git(dir, name, f'remote set-url origin "{url}"', None, f"Failed to set {name}'s origin URL", live=False)
-
-        run_git(dir, name, 'fetch', f"Fetching updates for {name}...", f"Couldn't fetch {name}", autofix=False)
-
-        run_git(dir, name, f'checkout {commithash}', f"Checking out commit for {name} with hash: {commithash}...", f"Couldn't checkout commit {commithash} for {name}", live=True)
-
         return
 
     try:
@@ -194,8 +180,31 @@ def git_clone(url, dir, name, commithash=None):
         shutil.rmtree(dir, ignore_errors=True)
         raise
 
-    if commithash is not None:
-        run(f'"{git}" -C "{dir}" checkout {commithash}', None, "Couldn't checkout {name}'s hash: {commithash}")
+    # if os.path.exists(dir):
+    #     if commithash is None:
+    #         return
+
+    #     current_hash = run_git(dir, name, 'rev-parse HEAD', None, f"Couldn't determine {name}'s hash: {commithash}", live=False).strip()
+    #     if current_hash == commithash:
+    #         return
+
+    #     if run_git(dir, name, 'config --get remote.origin.url', None, f"Couldn't determine {name}'s origin URL", live=False).strip() != url:
+    #         run_git(dir, name, f'remote set-url origin "{url}"', None, f"Failed to set {name}'s origin URL", live=False)
+
+    #     run_git(dir, name, 'fetch', f"Fetching updates for {name}...", f"Couldn't fetch {name}", autofix=False)
+
+    #     run_git(dir, name, f'checkout {commithash}', f"Checking out commit for {name} with hash: {commithash}...", f"Couldn't checkout commit {commithash} for {name}", live=True)
+
+    #     return
+
+    # try:
+    #     run(f'"{git}" clone --config core.filemode=false "{url}" "{dir}"', f"Cloning {name} into {dir}...", f"Couldn't clone {name}", live=True)
+    # except RuntimeError:
+    #     shutil.rmtree(dir, ignore_errors=True)
+    #     raise
+
+    # if commithash is not None:
+    #     run(f'"{git}" -C "{dir}" checkout {commithash}', None, "Couldn't checkout {name}'s hash: {commithash}")
 
 
 def git_pull_recursive(dir):
@@ -408,11 +417,11 @@ def prepare_environment():
 
     os.makedirs(os.path.join(script_path, dir_repos), exist_ok=True)
 
-    # git_clone(assets_repo, repo_dir('stable-diffusion-webui-assets'), "assets", assets_commit_hash)
-    # git_clone(stable_diffusion_repo, repo_dir('stable-diffusion-stability-ai'), "Stable Diffusion", stable_diffusion_commit_hash)
-    # git_clone(stable_diffusion_xl_repo, repo_dir('generative-models'), "Stable Diffusion XL", stable_diffusion_xl_commit_hash)
-    # git_clone(k_diffusion_repo, repo_dir('k-diffusion'), "K-diffusion", k_diffusion_commit_hash)
-    # git_clone(blip_repo, repo_dir('BLIP'), "BLIP", blip_commit_hash)
+    git_clone(assets_repo, repo_dir('stable-diffusion-webui-assets'), "assets", assets_commit_hash)
+    git_clone(stable_diffusion_repo, repo_dir('stable-diffusion-stability-ai'), "Stable Diffusion", stable_diffusion_commit_hash)
+    git_clone(stable_diffusion_xl_repo, repo_dir('generative-models'), "Stable Diffusion XL", stable_diffusion_xl_commit_hash)
+    git_clone(k_diffusion_repo, repo_dir('k-diffusion'), "K-diffusion", k_diffusion_commit_hash)
+    git_clone(blip_repo, repo_dir('BLIP'), "BLIP", blip_commit_hash)
 
     startup_timer.record("clone repositores")
 
