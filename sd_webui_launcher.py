@@ -227,7 +227,7 @@ class WebUILauncher:
         self.webui_dir = os.path.abspath(webui_dir or os.getcwd())
         # **关键修改：指定使用内嵌的Python**
         # self.python_exe = os.path.join(self.webui_dir, 'python', 'python.exe')
-        self.python_exe = python_exe_path
+        self.python_exe = sys.executable
         self.process = None
         self.config = self.load_config()
         # 更新配置中的python_path
