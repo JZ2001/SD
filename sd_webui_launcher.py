@@ -226,7 +226,8 @@ class WebUILauncher:
     def __init__(self, webui_dir=None):
         self.webui_dir = os.path.abspath(webui_dir or os.getcwd())
         # **关键修改：指定使用内嵌的Python**
-        self.python_exe = os.path.join(self.webui_dir, 'python', 'python.exe')
+        # self.python_exe = os.path.join(self.webui_dir, 'python', 'python.exe')
+        self.python_exe = python_exe_path
         self.process = None
         self.config = self.load_config()
         # 更新配置中的python_path
@@ -253,12 +254,13 @@ class WebUILauncher:
     def _get_default_config(self):
         """获取默认配置，参考成功日志"""
         # 确保python_path在初始化后设置
-        python_exe_path = os.path.join(self.webui_dir, 'python', 'python.exe') if hasattr(self, 'webui_dir') else sys.executable
-
+        # python_exe_path = os.path.join(self.webui_dir, 'python', 'python.exe') if hasattr(self, 'webui_dir') else sys.executable
+        python_exe_path = sys.executable
         return {
             'python_path': python_exe_path, # 将在 __init__ 中被覆盖
             # 参考成功日志的参数，并移除可能由 .exe 自动处理的参数如 --theme, --autolaunch
-            'launch_args': '--medvram --xformers --api --listen --skip-python-version-check',
+            # 'launch_args': '--medvram --xformers --api --listen --skip-python-version-check',
+            'launch_args': '--medvram --api --listen --skip-python-version-check --skip-torch-cuda-test', #mac原因
             'auto_launch_browser': True, # 保留此项，因为Python脚本需要明确控制
             'port': 7860,
             'use_gpu': True,
