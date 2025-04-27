@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - SoDesign.AI</title>
+    <!-- 引入字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0f1116',
+                        'dark-lighter': '#1a1d26',
+                        'primary': '#ff5f00',
+                        'primary-light': '#ff7e33',
+                        'accent-blue': '#00a2ff',
+                        'accent-purple': '#7c3aed'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'mono': ['"JetBrains Mono"', 'monospace']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-5px)' },
+                            '20%, 40%, 60%, 80%': { transform: 'translateX(5px)' }
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        /* 基础样式 */
+        body {
+            background: linear-gradient(135deg, #0f1116 0%, #1a1d26 100%);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* 粒子效果 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            filter: blur(1px);
+            transition: transform 0.3s ease;
+            z-index: 0;
+        }
+        
+        .ripple {
+            animation: ripple 1s cubic-bezier(0, 0.5, 0.5, 1) forwards;
+            opacity: 0.7;
+            filter: blur(2px);
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(100);
+                opacity: 0;
+            }
+        }
+        
+        /* 玻璃效果 */
+        .glass {
+            background: rgba(26, 29, 38, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 按钮效果 */
+        .btn-effect {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 95, 0, 0.3);
+        }
+        
+        .btn-effect:hover {
+            box-shadow: 0 6px 20px rgba(255, 95, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* 输入框效果 */
+        .input-effect {
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-effect:focus {
+            box-shadow: 0 4px 15px rgba(0, 162, 255, 0.2);
+            transform: translateY(-1px);
+            border-color: #00a2ff;
+        }
+        
+        /* Logo发光效果 */
+        .logo-glow {
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px rgba(255, 95, 0, 0.5), 0 0 10px rgba(255, 95, 0, 0.3);
+            }
+            to {
+                text-shadow: 0 0 10px rgba(255, 95, 0, 0.7), 0 0 20px rgba(255, 95, 0, 0.5), 0 0 30px rgba(255, 95, 0, 0.3);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center font-sans text-white">
+    <!-- 粒子背景 -->
+    <div id="particles" class="particles"></div>
+    
+    <!-- 登录卡片 -->
+    <div class="relative z-10 w-full max-w-md px-6 py-8 mx-4 glass rounded-2xl">
+        <!-- 标题和Logo -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-2 logo-glow">SoDesign<span class="text-primary">.AI</span></h1>
+            <p class="text-gray-400">构建工业设计领域的智能创生引擎</p>
+        </div>
+        
+        <!-- 登录表单 -->
+        <form id="loginForm" class="space-y-6">
+            <!-- 用户名输入 -->
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-300 mb-1">用户名</label>
+                <input type="text" id="username" name="username" 
+                    class="w-full px-4 py-3 bg-dark-lighter rounded-lg text-white input-effect focus:outline-none"
+                    placeholder="请输入用户名" required>
+            </div>
+            
+            <!-- 密码输入 -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-300 mb-1">密码</label>
+                <input type="password" id="password" name="password" 
+                    class="w-full px-4 py-3 bg-dark-lighter rounded-lg text-white input-effect focus:outline-none"
+                    placeholder="请输入密码" required>
+            </div>
+            
+            <!-- 错误信息显示 -->
+            <div id="errorMsg" class="hidden text-red-500 text-sm py-2 px-3 bg-red-100/10 rounded-lg"></div>
+            
+            <!-- 提交按钮 -->
+            <div>
+                <button type="submit" 
+                    class="w-full py-3 text-white font-medium rounded-lg btn-effect bg-gradient-to-r from-primary to-accent-purple">
+                    登录
+                </button>
+            </div>
+            
+            <!-- 默认账户提示
+            <div class="text-center text-sm text-gray-400 mt-4">
+                <p>默认账户: <span class="text-primary">admin</span></p>
+                <p>默认密码: <span class="text-primary">123456</span></p>
+            </div> -->
+        </form>
+    </div>
+    
+    <!-- 粒子效果脚本 -->
+    <script>
+        // 粒子对象数组
+        let particles = [];
+        const colors = ['#ff5f00', '#00a2ff', '#7c3aed', '#ffcc00', '#ff00cc'];
+        const particlesContainer = document.getElementById('particles');
+        
+        // 页面加载时初始化粒子
+        window.addEventListener('DOMContentLoaded', () => {
+            // 创建初始粒子
+            createParticles(50);
+            // 开始动画
+            animateParticles();
+            // 添加点击效果
+            document.addEventListener('click', createRipple);
+        });
+        
+        // 创建粒子函数
+        function createParticles(count) {
+            for (let i = 0; i < count; i++) {
+                const size = Math.random() * 5 + 2;
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const speedX = Math.random() * 0.5 - 0.25;
+                const speedY = Math.random() * 0.5 - 0.25;
+                
+                // 创建粒子DOM元素
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.backgroundColor = color;
+                
+                // 添加到容器
+                particlesContainer.appendChild(particle);
+                
+                // 保存粒子数据
+                particles.push({
+                    element: particle,
+                    x,
+                    y,
+                    speedX,
+                    speedY,
+                    size
+                });
+            }
+        }
+        
+        // 动画函数
+        function animateParticles() {
+            // 移动每个粒子
+            particles.forEach(p => {
+                // 更新位置
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                // 边界检查
+                if (p.x < -p.size) p.x = window.innerWidth + p.size;
+                if (p.x > window.innerWidth + p.size) p.x = -p.size;
+                if (p.y < -p.size) p.y = window.innerHeight + p.size;
+                if (p.y > window.innerHeight + p.size) p.y = -p.size;
+                
+                // 更新DOM元素位置
+                p.element.style.left = p.x + 'px';
+                p.element.style.top = p.y + 'px';
+            });
+            
+            // 循环动画
+            requestAnimationFrame(animateParticles);
+        }
+        
+        // 点击涟漪效果
+        function createRipple(e) {
+            const ripple = document.createElement('div');
+            ripple.className = 'particle ripple';
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            ripple.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            particlesContainer.appendChild(ripple);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                particlesContainer.removeChild(ripple);
+            }, 1000);
+        }
+        
+        // 表单提交处理
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.classList.add('hidden');
+            
+            // 获取表单数据
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            // 获取提交按钮并显示加载状态
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> 登录中...';
+            
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+            
+            // 发送登录请求
+            fetch('/login_check', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                // 先检查响应状态
+                console.log('登录响应状态:', response.status);
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        return { error: '用户名或密码错误' };
+                    } else if (response.status === 400) {
+                        return { error: '请提供有效的用户名和密码' };
+                    } else if (response.status === 422) {
+                        return { error: '请求数据格式错误，请检查浏览器控制台' };
+                    } else {
+                        return { error: '服务器错误 (' + response.status + ')' };
+                    }
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 恢复按钮状态
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                
+                console.log('登录响应数据:', data);
+                
+                if (data.success) {
+                    // 登录成功，显示成功消息然后重定向
+                    errorMsg.textContent = '登录成功，正在跳转...';
+                    errorMsg.classList.remove('hidden');
+                    errorMsg.classList.remove('text-red-500');
+                    errorMsg.classList.add('text-green-500');
+                    errorMsg.classList.add('bg-green-100/10');
+                    
+                    // 如果有用户数据，显示欢迎信息
+                    if (data.user) {
+                        const username = data.user.username || data.user.account;
+                        const points = data.user.points || 0;
+                        errorMsg.textContent = `欢迎回来，${username}！积分：${points}`;
+                    }
+                    
+                    // 延迟跳转，让用户看到成功信息
+                    setTimeout(() => {
+                        // 使用相对URL，避免直接访问根路径
+                        window.location.href = './?__theme=light';
+                    }, 800);
+                } else {
+                    // 显示错误信息
+                    errorMsg.textContent = data.error || '用户名或密码错误';
+                    errorMsg.classList.remove('hidden');
+                    errorMsg.classList.add('text-red-500');
+                    errorMsg.classList.add('bg-red-100/10');
+                    
+                    // 添加摇晃动画
+                    document.querySelector('.glass').classList.add('animate-shake');
+                    // 移除动画类，以便下次可以再次触发
+                    setTimeout(() => {
+                        document.querySelector('.glass').classList.remove('animate-shake');
+                    }, 500);
+                }
+            })
+            .catch(error => {
+                // 恢复按钮状态
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                
+                errorMsg.textContent = '登录请求失败，请检查网络连接';
+                errorMsg.classList.remove('hidden');
+                console.error('登录错误:', error);
+            });
+        });
+    </script>
+</body>
+</html> 

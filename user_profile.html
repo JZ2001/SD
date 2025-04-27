@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人资料 - SoDesign.AI</title>
+    <!-- 引入字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0f1116',
+                        'dark-lighter': '#1a1d26',
+                        'primary': '#ff5f00',
+                        'primary-light': '#ff7e33',
+                        'accent-blue': '#00a2ff',
+                        'accent-purple': '#7c3aed'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'mono': ['"JetBrains Mono"', 'monospace']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        /* 基础样式 */
+        body {
+            background: linear-gradient(135deg, #0f1116 0%, #1a1d26 100%);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* 粒子效果 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            filter: blur(1px);
+            transition: transform 0.3s ease;
+            z-index: 0;
+        }
+        
+        /* 玻璃效果 */
+        .glass {
+            background: rgba(26, 29, 38, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 导航栏基础样式 */
+        .navbar-glass {
+            background: rgba(26, 29, 38, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Logo发光效果 */
+        .logo-glow {
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px rgba(255, 95, 0, 0.5), 0 0 10px rgba(255, 95, 0, 0.3);
+            }
+            to {
+                text-shadow: 0 0 10px rgba(255, 95, 0, 0.7), 0 0 20px rgba(255, 95, 0, 0.5), 0 0 30px rgba(255, 95, 0, 0.3);
+            }
+        }
+        
+        /* 输入框效果 */
+        .input-effect {
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-effect:focus {
+            box-shadow: 0 4px 15px rgba(0, 162, 255, 0.2);
+            transform: translateY(-1px);
+            border-color: #00a2ff;
+        }
+        
+        /* 按钮效果 */
+        .btn-effect {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 95, 0, 0.3);
+        }
+        
+        .btn-effect:hover {
+            box-shadow: 0 6px 20px rgba(255, 95, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* 卡片悬停效果 */
+        .hover-card {
+            transition: all 0.3s ease;
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* 标签页动画 */
+        .tab-transition {
+            transition: all 0.3s ease;
+        }
+        
+        /* 积分显示动画 */
+        .points-badge {
+            animation: pulse-badge 2s infinite;
+        }
+        
+        @keyframes pulse-badge {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 95, 0, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(255, 95, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 95, 0, 0);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+    <!-- 粒子背景 -->
+    <div id="particles" class="particles"></div>
+    
+    <!-- 导入导航栏 -->
+    <div id="userNavbar" class="fixed top-0 left-0 right-0 navbar-glass z-50 px-4 py-2 flex items-center justify-between">
+        <!-- 左侧Logo -->
+        <div class="flex items-center">
+            <a href="./" class="text-2xl font-bold logo-glow text-white">
+                SoDesign<span class="text-primary">.AI</span>
+            </a>
+        </div>
+        
+        <!-- 右侧用户信息 -->
+        <div id="userInfoContainer" class="relative">
+            <!-- 点击展开的用户信息卡片 -->
+            <div class="user-info-card bg-dark-lighter rounded-lg px-4 py-2 flex items-center space-x-3 cursor-pointer shadow-md hover:shadow-lg">
+                <div class="flex flex-col">
+                    <span id="usernameDisplay" class="text-white font-medium">加载中...</span>
+                    <div class="flex items-center space-x-1">
+                        <span class="text-xs text-gray-400">积分:</span>
+                        <span id="pointsDisplay" class="text-xs font-medium text-primary points-pulse px-2 py-0.5 rounded-full bg-primary/10">--</span>
+                    </div>
+                </div>
+                <!-- 头像图标 -->
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent-purple flex items-center justify-center text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- 下拉菜单 (默认隐藏) -->
+            <div id="userDropdown" class="absolute right-0 mt-2 w-48 bg-dark-lighter rounded-lg shadow-lg py-2 hidden">
+                <a href="user_profile.html" class="block px-4 py-2 text-sm text-white hover:bg-primary/20 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    个人信息
+                </a>
+                <a href="user_profile.html?tab=settings" class="block px-4 py-2 text-sm text-white hover:bg-primary/20 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    设置
+                </a>
+                <div class="border-t border-gray-700 my-1"></div>
+                <a href="logout" class="block px-4 py-2 text-sm text-red-400 hover:bg-red-500/20 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    退出登录
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用于占位，确保内容不被导航栏遮挡 -->
+    <div id="navbarSpacer" class="h-14"></div>
+
+    <!-- 主要内容容器 -->
+    <div class="container mx-auto px-4 py-8 mt-6 z-10 relative">
+        <!-- 标签页导航 -->
+        <div class="flex mb-8 border-b border-gray-700">
+            <button id="profileTab" class="py-3 px-6 font-medium text-primary border-b-2 border-primary tab-transition">
+                个人资料
+            </button>
+            <button id="settingsTab" class="py-3 px-6 font-medium text-gray-400 hover:text-white tab-transition">
+                账户设置
+            </button>
+        </div>
+        
+        <!-- 个人资料页面 -->
+        <div id="profileContent" class="glass rounded-xl p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <span class="mr-2">个人资料</span>
+                <span class="text-xs text-primary bg-primary/10 px-3 py-1 rounded-full">ID: <span id="userId">-</span></span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 左侧用户信息卡片 -->
+                <div class="md:col-span-1">
+                    <div class="glass rounded-xl p-6 hover-card">
+                        <div class="flex flex-col items-center">
+                            <!-- 用户头像 -->
+                            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent-purple flex items-center justify-center text-white mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                            </div>
+                            
+                            <!-- 用户名和账户类型 -->
+                            <h3 id="profileUsername" class="text-xl font-bold mb-1">-</h3>
+                            <p id="profileAccount" class="text-gray-400 mb-4">@-</p>
+                            
+                            <!-- 积分显示 -->
+                            <div class="bg-dark px-4 py-2 rounded-lg mb-4 w-full text-center">
+                                <span class="text-xs text-gray-400">积分</span>
+                                <p id="profilePoints" class="text-2xl font-bold text-primary points-badge">-</p>
+                            </div>
+                            
+                            <!-- 账户状态 -->
+                            <div class="flex items-center space-x-2 text-sm">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                <span>账户状态: 活跃</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧详细信息 -->
+                <div class="md:col-span-2">
+                    <div class="glass rounded-xl p-6 hover-card mb-6">
+                        <h3 class="text-lg font-semibold mb-4">账户信息</h3>
+                        
+                        <div class="space-y-4">
+                            <!-- 用户名 -->
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between py-2 border-b border-gray-700">
+                                <div class="text-sm text-gray-400">用户名</div>
+                                <div id="infoUsername" class="font-medium">-</div>
+                            </div>
+                            
+                            <!-- 账户名 -->
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between py-2 border-b border-gray-700">
+                                <div class="text-sm text-gray-400">账户名</div>
+                                <div id="infoAccount" class="font-medium">-</div>
+                            </div>
+                            
+                            <!-- 邮箱地址 -->
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between py-2 border-b border-gray-700">
+                                <div class="text-sm text-gray-400">邮箱地址</div>
+                                <div id="infoEmail" class="font-medium">-</div>
+                            </div>
+                            
+                            <!-- 创建时间 -->
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between py-2 border-b border-gray-700">
+                                <div class="text-sm text-gray-400">创建时间</div>
+                                <div id="infoCreatedAt" class="font-medium">-</div>
+                            </div>
+                            
+                            <!-- 最后登录 -->
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between py-2">
+                                <div class="text-sm text-gray-400">最后登录</div>
+                                <div id="infoLastLogin" class="font-medium">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 账户设置页面 (默认隐藏) -->
+        <div id="settingsContent" class="glass rounded-xl p-6 mb-8 hidden">
+            <h2 class="text-2xl font-bold mb-6">账户设置</h2>
+            
+            <!-- 修改密码表单 -->
+            <div class="glass rounded-xl p-6 mb-6 hover-card">
+                <h3 class="text-lg font-semibold mb-4">修改密码</h3>
+                
+                <form id="passwordForm" class="space-y-4">
+                    <!-- 当前密码 -->
+                    <div>
+                        <label for="currentPassword" class="block text-sm font-medium text-gray-300 mb-1">当前密码</label>
+                        <input type="password" id="currentPassword" name="currentPassword" 
+                            class="w-full px-4 py-3 bg-dark-lighter rounded-lg text-white input-effect focus:outline-none"
+                            placeholder="请输入当前密码" required>
+                    </div>
+                    
+                    <!-- 新密码 -->
+                    <div>
+                        <label for="newPassword" class="block text-sm font-medium text-gray-300 mb-1">新密码</label>
+                        <input type="password" id="newPassword" name="newPassword" 
+                            class="w-full px-4 py-3 bg-dark-lighter rounded-lg text-white input-effect focus:outline-none"
+                            placeholder="请输入新密码" required>
+                    </div>
+                    
+                    <!-- 确认新密码 -->
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-1">确认新密码</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" 
+                            class="w-full px-4 py-3 bg-dark-lighter rounded-lg text-white input-effect focus:outline-none"
+                            placeholder="请再次输入新密码" required>
+                    </div>
+                    
+                    <!-- 错误信息显示 -->
+                    <div id="passwordErrorMsg" class="hidden text-red-500 text-sm py-2 px-3 bg-red-100/10 rounded-lg"></div>
+                    
+                    <!-- 提交按钮 -->
+                    <div>
+                        <button type="submit" 
+                            class="px-6 py-2 text-white font-medium rounded-lg btn-effect bg-gradient-to-r from-primary to-accent-purple">
+                            更新密码
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- 修改邮箱表单 -->
+            <div class="glass rounded-xl p-6 hover-card">
+                <h3 class="text-lg font-semibold mb-4">修改邮箱</h3>
+                
+                <form id="emailForm" class="space-y-4">
+                    <!-- 当前邮箱 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">当前邮箱</label>
+                        <div id="currentEmail" class="w-full px-4 py-3 bg-dark rounded-lg text-white">-</div>
+                    </div>
+                    
+                    <!-- 新邮箱 -->
+                    <div>
+                        <label for="newEmail" class="block text-sm font-medium text-gray-300 mb-1">新邮箱</label>
+                        <input type="email" id="newEmail" name="newEmail" 
+                            class="w-full px-4 py-3 bg-dark-lighter rounded-lg text-white input-effect focus:outline-none"
+                            placeholder="请输入新邮箱地址" required>
+                    </div>
+                    
+                    <!-- 密码验证 -->
+                    <div>
+                        <label for="emailPasswordConfirm" class="block text-sm font-medium text-gray-300 mb-1">当前密码</label>
+                        <input type="password" id="emailPasswordConfirm" name="emailPasswordConfirm" 
+                            class="w-full px-4 py-3 bg-dark-lighter rounded-lg text-white input-effect focus:outline-none"
+                            placeholder="请输入当前密码进行验证" required>
+                    </div>
+                    
+                    <!-- 错误信息显示 -->
+                    <div id="emailErrorMsg" class="hidden text-red-500 text-sm py-2 px-3 bg-red-100/10 rounded-lg"></div>
+                    
+                    <!-- 提交按钮 -->
+                    <div>
+                        <button type="submit" 
+                            class="px-6 py-2 text-white font-medium rounded-lg btn-effect bg-gradient-to-r from-primary to-accent-purple">
+                            更新邮箱
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 粒子效果脚本 -->
+    <script>
+        // 粒子对象数组
+        let particles = [];
+        const colors = ['#ff5f00', '#00a2ff', '#7c3aed', '#ffcc00', '#ff00cc'];
+        const particlesContainer = document.getElementById('particles');
+        
+        // 页面加载时初始化粒子
+        window.addEventListener('DOMContentLoaded', () => {
+            // 创建初始粒子
+            createParticles(30);
+            // 开始动画
+            animateParticles();
+        });
+        
+        // 创建粒子函数
+        function createParticles(count) {
+            for (let i = 0; i < count; i++) {
+                const size = Math.random() * 5 + 2;
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const speedX = Math.random() * 0.5 - 0.25;
+                const speedY = Math.random() * 0.5 - 0.25;
+                
+                // 创建粒子DOM元素
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.backgroundColor = color;
+                
+                // 添加到容器
+                particlesContainer.appendChild(particle);
+                
+                // 保存粒子数据
+                particles.push({
+                    element: particle,
+                    x,
+                    y,
+                    speedX,
+                    speedY,
+                    size
+                });
+            }
+        }
+        
+        // 动画函数
+        function animateParticles() {
+            // 移动每个粒子
+            particles.forEach(p => {
+                // 更新位置
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                // 边界检查
+                if (p.x < -p.size) p.x = window.innerWidth + p.size;
+                if (p.x > window.innerWidth + p.size) p.x = -p.size;
+                if (p.y < -p.size) p.y = window.innerHeight + p.size;
+                if (p.y > window.innerHeight + p.size) p.y = -p.size;
+                
+                // 更新DOM元素位置
+                p.element.style.left = p.x + 'px';
+                p.element.style.top = p.y + 'px';
+            });
+            
+            // 循环动画
+            requestAnimationFrame(animateParticles);
+        }
+    </script>
+
+    <!-- 用户界面交互脚本 -->
+    <script>
+        // 页面加载后添加事件监听器
+        window.onload = function() {
+            console.log("页面完全加载，开始初始化...");
+            
+            // 获取用户信息并更新页面
+            fetchUserInfo();
+            
+            // 重新绑定标签页点击事件
+            const profileTab = document.getElementById('profileTab');
+            const settingsTab = document.getElementById('settingsTab');
+            
+            if (profileTab) {
+                console.log("重新绑定个人资料标签点击事件");
+                profileTab.onclick = function() {
+                    console.log("点击个人资料标签 - 直接onclick处理");
+                    showProfileTab();
+                    return false;
+                };
+            }
+            
+            if (settingsTab) {
+                console.log("重新绑定设置标签点击事件");
+                settingsTab.onclick = function() {
+                    console.log("点击设置标签 - 直接onclick处理");
+                    showSettingsTab();
+                    return false;
+                };
+            }
+            
+            // 重新绑定用户信息卡片点击事件
+            const userInfoCard = document.querySelector('.user-info-card');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userInfoCard && userDropdown) {
+                console.log("重新绑定用户信息卡片点击事件");
+                userInfoCard.onclick = function(e) {
+                    console.log("点击用户信息卡片 - 直接onclick处理");
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                    return false;
+                };
+            }
+            
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function(event) {
+                if (userInfoCard && userDropdown && !userInfoCard.contains(event.target) && !userDropdown.contains(event.target)) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+            
+            // 密码修改表单提交
+            const passwordForm = document.getElementById('passwordForm');
+            if (passwordForm) {
+                console.log("重新绑定密码修改表单提交事件");
+                passwordForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    console.log("提交密码修改表单");
+                    
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    const errorMsg = document.getElementById('passwordErrorMsg');
+                    
+                    // 验证两次输入的密码是否一致
+                    if (newPassword !== confirmPassword) {
+                        errorMsg.textContent = '两次输入的新密码不一致';
+                        errorMsg.classList.remove('hidden');
+                        return false;
+                    }
+                    
+                    // 隐藏错误信息
+                    errorMsg.classList.add('hidden');
+                    
+                    // 构建请求数据
+                    const formData = new FormData();
+                    formData.append('current_password', currentPassword);
+                    formData.append('new_password', newPassword);
+                    
+                    // 发送修改密码请求
+                    fetch('api/update_password', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        console.log("密码修改响应状态: " + response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("密码修改响应数据: " + JSON.stringify(data));
+                        if (data.success) {
+                            // 显示成功消息
+                            errorMsg.textContent = '密码更新成功！';
+                            errorMsg.classList.remove('hidden', 'text-red-500', 'bg-red-100/10');
+                            errorMsg.classList.add('text-green-500', 'bg-green-100/10');
+                            
+                            // 清空表单
+                            passwordForm.reset();
+                        } else {
+                            // 显示错误信息
+                            errorMsg.textContent = data.message || '密码更新失败，请重试';
+                            errorMsg.classList.remove('hidden');
+                            errorMsg.classList.add('text-red-500', 'bg-red-100/10');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('密码更新错误:', error);
+                        errorMsg.textContent = '请求失败，请检查网络连接';
+                        errorMsg.classList.remove('hidden');
+                        errorMsg.classList.add('text-red-500', 'bg-red-100/10');
+                    });
+                    
+                    return false;
+                };
+            } else {
+                console.error("密码修改表单未找到");
+            }
+            
+            // 邮箱修改表单提交
+            const emailForm = document.getElementById('emailForm');
+            if (emailForm) {
+                console.log("重新绑定邮箱修改表单提交事件");
+                emailForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    console.log("提交邮箱修改表单");
+                    
+                    const newEmail = document.getElementById('newEmail').value;
+                    const emailPasswordConfirm = document.getElementById('emailPasswordConfirm').value;
+                    const errorMsg = document.getElementById('emailErrorMsg');
+                    
+                    // 隐藏错误信息
+                    errorMsg.classList.add('hidden');
+                    
+                    // 构建请求数据
+                    const formData = new FormData();
+                    formData.append('new_email', newEmail);
+                    formData.append('password', emailPasswordConfirm);
+                    
+                    // 发送修改邮箱请求
+                    fetch('api/update_email', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        console.log("邮箱修改响应状态: " + response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("邮箱修改响应数据: " + JSON.stringify(data));
+                        if (data.success) {
+                            // 显示成功消息
+                            errorMsg.textContent = '邮箱更新成功！';
+                            errorMsg.classList.remove('hidden', 'text-red-500', 'bg-red-100/10');
+                            errorMsg.classList.add('text-green-500', 'bg-green-100/10');
+                            
+                            // 更新当前邮箱显示
+                            document.getElementById('currentEmail').textContent = newEmail;
+                            document.getElementById('infoEmail').textContent = newEmail;
+                            
+                            // 清空表单
+                            document.getElementById('newEmail').value = '';
+                            document.getElementById('emailPasswordConfirm').value = '';
+                        } else {
+                            // 显示错误信息
+                            errorMsg.textContent = data.message || '邮箱更新失败，请重试';
+                            errorMsg.classList.remove('hidden');
+                            errorMsg.classList.add('text-red-500', 'bg-red-100/10');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('邮箱更新错误:', error);
+                        errorMsg.textContent = '请求失败，请检查网络连接';
+                        errorMsg.classList.remove('hidden');
+                        errorMsg.classList.add('text-red-500', 'bg-red-100/10');
+                    });
+                    
+                    return false;
+                };
+            } else {
+                console.error("邮箱修改表单未找到");
+            }
+            
+            // 显示个人资料标签页函数
+            function showProfileTab() {
+                const profileContent = document.getElementById('profileContent');
+                const settingsContent = document.getElementById('settingsContent');
+                
+                if (!profileContent || !settingsContent) {
+                    console.error("找不到内容区域元素");
+                    return;
+                }
+                
+                console.log("执行showProfileTab函数");
+                profileTab.classList.add('text-primary', 'border-primary', 'border-b-2');
+                profileTab.classList.remove('text-gray-400');
+                settingsTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
+                settingsTab.classList.add('text-gray-400');
+                
+                profileContent.classList.remove('hidden');
+                settingsContent.classList.add('hidden');
+                
+                // 更新URL参数但不刷新页面
+                history.pushState({}, '', window.location.pathname);
+            }
+            
+            // 显示设置标签页函数
+            function showSettingsTab() {
+                const profileContent = document.getElementById('profileContent');
+                const settingsContent = document.getElementById('settingsContent');
+                
+                if (!profileContent || !settingsContent) {
+                    console.error("找不到内容区域元素");
+                    return;
+                }
+                
+                console.log("执行showSettingsTab函数");
+                settingsTab.classList.add('text-primary', 'border-primary', 'border-b-2');
+                settingsTab.classList.remove('text-gray-400');
+                profileTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
+                profileTab.classList.add('text-gray-400');
+                
+                settingsContent.classList.remove('hidden');
+                profileContent.classList.add('hidden');
+                
+                // 更新URL参数但不刷新页面
+                history.pushState({}, '', window.location.pathname + '?tab=settings');
+            }
+            
+            // 初始化显示
+            if (window.location.search.includes('tab=settings')) {
+                showSettingsTab();
+            } else {
+                showProfileTab();
+            }
+        };
+        
+        // 获取用户信息函数
+        function fetchUserInfo() {
+            console.log("开始获取用户信息");
+            
+            // 模拟数据 - 仅用于测试，实际环境请删除此部分
+            const mockUserData = {
+                user: {
+                    id: 1,
+                    username: "管理员",
+                    account: "admin",
+                    email: "admin@example.com",
+                    points: 1000,
+                    created_at: "2025-04-12 16:42:37",
+                    last_login: "2025-04-13 05:19:51"
+                }
+            };
+            
+            // 使用模拟数据更新界面 - 仅用于测试
+            updateUserInterface(mockUserData);
+            
+            // 实际API调用 - 如果后端API准备好了，取消注释此部分
+            /*
+            fetch('api/user_info')
+                .then(response => {
+                    console.log("用户信息响应状态: " + response.status);
+                    if (!response.ok) {
+                        throw new Error('获取用户信息失败，状态码: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("获取到用户信息: " + JSON.stringify(data));
+                    updateUserInterface(data);
+                })
+                .catch(error => {
+                    console.error('获取用户信息错误:', error);
+                    // 显示错误状态
+                    document.getElementById('usernameDisplay').textContent = '获取信息失败';
+                    document.getElementById('pointsDisplay').textContent = '--';
+                });
+            */
+        }
+        
+        // 更新用户界面函数
+        function updateUserInterface(data) {
+            if (data.user) {
+                // 更新导航栏用户信息
+                document.getElementById('usernameDisplay').textContent = data.user.username || '-';
+                document.getElementById('pointsDisplay').textContent = data.user.points || '0';
+                
+                // 更新个人资料页面信息
+                document.getElementById('userId').textContent = data.user.id || '-';
+                document.getElementById('profileUsername').textContent = data.user.username || '-';
+                document.getElementById('profileAccount').textContent = '@' + (data.user.account || '-');
+                document.getElementById('profilePoints').textContent = data.user.points || '0';
+                
+                // 更新详细信息
+                document.getElementById('infoUsername').textContent = data.user.username || '-';
+                document.getElementById('infoAccount').textContent = data.user.account || '-';
+                document.getElementById('infoEmail').textContent = data.user.email || '-';
+                document.getElementById('infoCreatedAt').textContent = formatDateTime(data.user.created_at) || '-';
+                document.getElementById('infoLastLogin').textContent = formatDateTime(data.user.last_login) || '从未登录';
+                
+                // 更新设置页面的邮箱信息
+                document.getElementById('currentEmail').textContent = data.user.email || '-';
+            }
+        }
+        
+        // 日期时间格式化函数
+        function formatDateTime(dateStr) {
+            if (!dateStr || dateStr === '(Null)') return null;
+            
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr; // 原样返回无法解析的日期字符串
+            
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+        }
+    </script>
+</body>
+</html> 

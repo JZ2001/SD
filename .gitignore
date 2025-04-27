@@ -1,0 +1,89 @@
+# Stable Diffusion WebUI .gitignore
+*.ckpt
+*.safetensors
+*.pt
+*.pth
+*.bin
+*.onnx
+models/
+embeddings/
+extensions/*/models
+lora/
+hypernetworks/
+vae/
+
+# 生成的输出图像
+outputs/
+outputs*/
+img2img-images/
+txt2img-images/
+*.jpg
+*.png
+*.webp
+# 允许提交README和文档中的图片
+!images/*.jpg
+!images/*.png
+!images/*.webp
+!img/**.jpg
+!img/**.png
+!img/**.webp
+!screenshot.png
+
+# 缓存和日志
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.log
+.cache/
+cache/
+logs/
+tmp/
+temp/
+
+# 环境相关
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+conda/
+.ipynb_checkpoints/
+
+# 开发工具相关
+.vscode/
+.idea/
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.coverage
+.coverage.*
+.coverage-*
+htmlcov/
+
+# 运行时生成的文件
+config.json
+ui-config.json
+styles.csv
+params.txt
+*.bat
+!webui.bat
+!webui-user.bat
+!update.bat
+!run.bat
+
+# 临时文件
+*.swp
+*.swo
+*~
+**/*.tmp
+**/tmp*
+
+
+# 其他应该忽略的文件
+node_modules/
+dist/
+build/

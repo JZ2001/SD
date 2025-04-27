@@ -1,0 +1,39 @@
+/* 全局样式调整 */
+:root {
+    --navbar-height: 48px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 调整Gradio应用容器 */
+gradio-app {
+    padding-top: 0 !important;
+}
+
+/* 使导航栏与Gradio界面更好地整合 */
+#user-navbar + gradio-app {
+    height: calc(100vh - var(--navbar-height)) !important;
+    overflow-y: auto;
+}
+
+/* 响应式设计调整 */
+@media (max-width: 768px) {
+    #user-navbar {
+        padding: 6px 15px;
+    }
+}
+
+/* 隐藏Gradio默认标题，因为我们使用了自定义导航栏 */
+gradio-app .gradio-header {
+    display: none !important;
+}
+
+/* 修复可能的滚动问题 */
+html, body {
+    overflow: hidden;
+    height: 100%;
+} 

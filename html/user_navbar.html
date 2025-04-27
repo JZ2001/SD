@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Navigation Bar</title>
+    <!-- 引入字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 导航栏基础样式 */
+        #user-navbar {
+            width: 100%;
+            background: linear-gradient(135deg, #0f1116 0%, #1a1d26 100%); /* 与登录页面完全一致的背景 */
+            color: white;
+            padding: 10px 24px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 60px;
+            margin: 0;
+            border: none;
+        }
+
+        /* Logo 样式 - 完全复制登录页面样式 */
+        .navbar-logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.5px;
+            animation: glow 3s ease-in-out infinite alternate; /* 添加发光动画 */
+        }
+
+        .navbar-logo .ai-suffix {
+            color: #ff5f00; /* 与登录页使用相同的橙色 */
+        }
+        
+        /* Logo发光效果 - 与登录页一致 */
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px rgba(255, 95, 0, 0.5), 0 0 10px rgba(255, 95, 0, 0.3);
+            }
+            to {
+                text-shadow: 0 0 10px rgba(255, 95, 0, 0.7), 0 0 20px rgba(255, 95, 0, 0.5), 0 0 30px rgba(255, 95, 0, 0.3);
+            }
+        }
+
+        /* 用户信息样式 */
+        .user-info {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 6px 15px;
+            border-radius: 50px;
+            transition: all 0.3s;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-info:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff5f00, #ff7e33);
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(255, 95, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-points {
+            font-size: 12px;
+            color: #ff7e33;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-points i {
+            font-size: 10px;
+            margin-right: 4px;
+        }
+
+        /* 用户信息下拉菜单 */
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: rgba(26, 29, 38, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 0;
+            min-width: 200px;
+            display: none;
+            z-index: 1001;
+            overflow: hidden;
+            transform-origin: top right;
+            animation: dropdown-anim 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        @keyframes dropdown-anim {
+            0% { transform: translateY(-10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 14px 18px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(255, 95, 0, 0.1);
+            color: #ff5f00;
+        }
+
+        .dropdown-item i {
+            margin-right: 10px;
+            font-size: 16px;
+            color: #ff5f00;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .user-name {
+                max-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            
+            #user-navbar {
+                padding: 10px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-logo {
+                font-size: 24px;
+            }
+            
+            .user-avatar {
+                margin-right: 8px;
+            }
+        }
+
+        /* 模态框样式 - 与登录页面风格一致 */
+        #profile-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+            animation: modal-bg-anim 0.3s;
+        }
+        
+        @keyframes modal-bg-anim {
+            0% { background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); }
+            100% { background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); }
+        }
+
+        .modal-content {
+            background: rgba(26, 29, 38, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 28px;
+            width: 90%;
+            max-width: 440px;
+            transform: translateY(0);
+            animation: modal-anim 0.4s ease;
+            color: white;
+        }
+        
+        @keyframes modal-anim {
+            0% { transform: translateY(30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.2s;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: rgba(15, 17, 22, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: #ff5f00;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 95, 0, 0.1);
+        }
+
+        .modal-footer {
+            margin-top: 28px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .modal-button {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .cancel-button {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-right: 12px;
+        }
+
+        .cancel-button:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .save-button {
+            background: linear-gradient(to right, #ff5f00, #ff7e33);
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 95, 0, 0.3);
+        }
+
+        .save-button:hover {
+            background: linear-gradient(to right, #ff5000, #ff6e23);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(255, 95, 0, 0.4);
+        }
+        
+        /* 通知气泡 */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(26, 29, 38, 0.8);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            z-index: 3000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .toast-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast-notification.success {
+            border-left: 4px solid #ff5f00;
+        }
+        
+        .toast-notification.error {
+            border-left: 4px solid #ef4444;
+        }
+        
+        .toast-notification i {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+        
+        .toast-notification.success i {
+            color: #ff5f00;
+        }
+        
+        .toast-notification.error i {
+            color: #ef4444;
+        }
+
+        /* 登出按钮样式 */
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+            padding: 6px 12px;
+            background-color: #f44336;
+            border: 1px solid #d32f2f;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .logout-btn:hover {
+            background-color: #d32f2f;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .logout-btn i {
+            margin-right: 5px;
+            font-size: 14px;
+        }
+        
+        /* 确保移动端显示正常 */
+        @media (max-width: 768px) {
+            .user-info-container {
+                gap: 8px;
+            }
+            
+            .logout-btn {
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+            
+            .logout-btn i {
+                margin-right: 3px;
+            }
+        }
+
+        /* 用户信息和登出按钮容器 */
+        .user-info-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* 确保导航栏没有边距和白边 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f1116 0%, #1a1d26 100%);
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+    </style>
+    <!-- 添加Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div id="user-navbar">
+        <!-- Logo部分 -->
+        <div class="navbar-logo">
+            SoDesign<span class="ai-suffix">.AI</span>
+        </div>
+
+        <!-- 用户信息部分和登出按钮 -->
+        <div class="user-info-container">
+            <div class="user-info" id="userInfoDropdown">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-details">
+                    <div class="user-name" id="userName">加载中...</div>
+                    <div class="user-points" id="userPoints"><i class="fas fa-gem"></i>积分: --</div>
+                </div>
+                <!-- 下拉菜单 -->
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="dropdown-item" id="editProfileButton">
+                        <i class="fas fa-user-edit"></i>
+                        编辑个人信息
+                    </div>
+                    <div class="dropdown-item" id="dropdownLogoutButton">
+                        <i class="fas fa-sign-out-alt"></i>
+                        退出登录
+                    </div>
+                </div>
+            </div>
+            <!-- 独立登出按钮 -->
+            <button class="logout-btn" id="logoutButton">
+                <i class="fas fa-sign-out-alt"></i>退出
+            </button>
+        </div>
+    </div>
+
+    <!-- 个人信息编辑模态框 -->
+    <div id="profile-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">编辑个人信息</div>
+                <button class="close-button" id="closeModalButton">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="displayName">显示名称</label>
+                <input type="text" id="displayName" placeholder="请输入您的显示名称">
+            </div>
+            <div class="form-group">
+                <label for="email">电子邮箱</label>
+                <input type="email" id="email" placeholder="请输入您的电子邮箱">
+            </div>
+            <div class="form-group" id="statusFormGroup" style="display: none;">
+                <label for="updateStatus">更新状态</label>
+                <div id="updateStatus" style="font-size: 14px; color: rgba(255, 255, 255, 0.7);"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button cancel-button" id="cancelEditButton">取消</button>
+                <button class="modal-button save-button" id="saveProfileButton">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 通知提示框 -->
+    <div class="toast-notification" id="toastNotification">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+
+    <!-- JavaScript 代码 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const userInfoDropdown = document.getElementById('userInfoDropdown');
+            const userDropdown = document.getElementById('userDropdown');
+            const editProfileButton = document.getElementById('editProfileButton');
+            const profileModal = document.getElementById('profile-modal');
+            const closeModalButton = document.getElementById('closeModalButton');
+            const cancelEditButton = document.getElementById('cancelEditButton');
+            const saveProfileButton = document.getElementById('saveProfileButton');
+            const logoutButton = document.getElementById('logoutButton');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            const userPoints = document.getElementById('userPoints');
+            const displayNameInput = document.getElementById('displayName');
+            const emailInput = document.getElementById('email');
+            const toastNotification = document.getElementById('toastNotification');
+            const toastMessage = document.getElementById('toastMessage');
+            const statusFormGroup = document.getElementById('statusFormGroup');
+            const updateStatus = document.getElementById('updateStatus');
+            
+            let retryCount = 0;
+            const MAX_RETRY = 3;
+
+            // 显示通知
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                toastNotification.className = 'toast-notification ' + type;
+                
+                if (type === 'success') {
+                    toastNotification.innerHTML = '<i class="fas fa-check-circle"></i>' + message;
+                } else {
+                    toastNotification.innerHTML = '<i class="fas fa-exclamation-circle"></i>' + message;
+                }
+                
+                toastNotification.classList.add('show');
+                
+                setTimeout(() => {
+                    toastNotification.classList.remove('show');
+                }, 3000);
+            }
+
+            // 更新状态信息
+            function updateStatusMessage(message, isError = false) {
+                statusFormGroup.style.display = 'block';
+                updateStatus.textContent = message;
+                updateStatus.style.color = isError ? '#ef4444' : 'rgba(255, 255, 255, 0.7)';
+            }
+
+            // 获取用户信息
+            function fetchUserInfo() {
+                console.log("正在获取用户信息...");
+                fetch('/api/user/info')
+                    .then(response => {
+                        console.log("API响应状态:", response.status);
+                        if (!response.ok) {
+                            if (retryCount < MAX_RETRY) {
+                                retryCount++;
+                                console.log(`获取用户信息失败，尝试重试 (${retryCount}/${MAX_RETRY})...`);
+                                setTimeout(fetchUserInfo, 1000); // 1秒后重试
+                                return null;
+                            }
+                            throw new Error('用户未登录或获取信息失败');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!data) return; // 如果是null (来自重试逻辑)，直接返回
+                        
+                        console.log("获取到的用户数据:", data);
+                        
+                        // 更新用户信息显示
+                        userName.textContent = data.username || '未知用户';
+                        userPoints.innerHTML = `<i class="fas fa-gem"></i>积分: ${data.points || 0}`;
+                        
+                        // 设置头像显示第一个字母
+                        if (data.username && data.username.length > 0) {
+                            userAvatar.textContent = data.username.charAt(0).toUpperCase();
+                        }
+
+                        // 填充编辑表单的默认值
+                        displayNameInput.value = data.username || '';
+                        emailInput.value = data.email || '';
+                        
+                        retryCount = 0; // 重置重试计数
+                    })
+                    .catch(error => {
+                        console.error('获取用户信息失败:', error);
+                        userName.textContent = '获取信息失败';
+                        userPoints.innerHTML = `<i class="fas fa-gem"></i>积分: --`;
+                        
+                        // 如果是最后一次重试失败，可能需要考虑重定向到登录页面
+                        if (retryCount >= MAX_RETRY) {
+                            // 仅在开发环境中关闭这个自动重定向功能
+                            // window.location.href = '/login';
+                        }
+                    });
+            }
+
+            // 切换下拉菜单显示
+            userInfoDropdown.addEventListener('click', function(event) {
+                event.stopPropagation(); // 阻止事件冒泡
+                userDropdown.classList.toggle('show');
+            });
+
+            // 点击页面其他地方时关闭下拉菜单
+            document.addEventListener('click', function() {
+                userDropdown.classList.remove('show');
+            });
+
+            // 打开编辑个人信息模态框
+            editProfileButton.addEventListener('click', function() {
+                profileModal.style.display = 'flex';
+                statusFormGroup.style.display = 'none'; // 隐藏状态信息
+                userDropdown.classList.remove('show'); // 关闭下拉菜单
+            });
+
+            // 关闭模态框
+            closeModalButton.addEventListener('click', function() {
+                profileModal.style.display = 'none';
+            });
+
+            // 取消编辑
+            cancelEditButton.addEventListener('click', function() {
+                profileModal.style.display = 'none';
+            });
+
+            // 保存个人信息
+            saveProfileButton.addEventListener('click', function() {
+                // 验证表单
+                if (!displayNameInput.value.trim()) {
+                    updateStatusMessage('用户名不能为空', true);
+                    return;
+                }
+
+                // 禁用按钮，显示加载状态
+                saveProfileButton.disabled = true;
+                saveProfileButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+                updateStatusMessage('正在更新信息...');
+
+                const newUserData = {
+                    username: displayNameInput.value.trim(),
+                    email: emailInput.value.trim()
+                };
+
+                fetch('/api/user/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newUserData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('更新用户信息失败');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 恢复按钮状态
+                    saveProfileButton.disabled = false;
+                    saveProfileButton.innerHTML = '保存';
+                    
+                    // 更新成功后刷新用户信息
+                    fetchUserInfo();
+                    profileModal.style.display = 'none';
+                    // 显示成功提示
+                    showToast('个人信息更新成功！');
+                })
+                .catch(error => {
+                    console.error('更新用户信息失败:', error);
+                    saveProfileButton.disabled = false;
+                    saveProfileButton.innerHTML = '保存';
+                    updateStatusMessage('更新失败: ' + error.message, true);
+                    showToast('更新用户信息失败，请重试', 'error');
+                });
+            });
+
+            // 退出登录（主登出按钮）
+            logoutButton.addEventListener('click', function() {
+                performLogout();
+            });
+            
+            // 下拉菜单中的退出登录按钮
+            const dropdownLogoutButton = document.getElementById('dropdownLogoutButton');
+            if(dropdownLogoutButton) {
+                dropdownLogoutButton.addEventListener('click', function() {
+                    performLogout();
+                });
+            }
+            
+            // 统一的登出处理函数
+            function performLogout() {
+                // 显示加载状态
+                logoutButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 退出中...';
+                logoutButton.style.pointerEvents = 'none';
+                
+                fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    console.log('登出响应状态:', response.status);
+                    // 无论服务器返回什么，都视为登出成功
+                    showToast('退出成功，正在跳转...');
+                    
+                    // 手动清除可能的cookie
+                    document.cookie = "session_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie = "session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie = "sd_session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    
+                    // 延迟跳转，让用户看到提示
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1000);
+                    
+                    return;
+                })
+                .catch(error => {
+                    console.error('退出登录请求发送失败:', error);
+                    // 即使请求失败，也尝试跳转到登录页面
+                    showToast('退出过程中出现错误，正在跳转...');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1000);
+                });
+            }
+
+            // 点击模态框外部关闭模态框
+            profileModal.addEventListener('click', function(event) {
+                if (event.target === profileModal) {
+                    profileModal.style.display = 'none';
+                }
+            });
+            
+            // 监听输入变化，清除错误信息
+            displayNameInput.addEventListener('input', function() {
+                if (displayNameInput.value.trim()) {
+                    statusFormGroup.style.display = 'none';
+                }
+            });
+
+            // 初始化加载用户信息
+            fetchUserInfo();
+            
+            // 如果用户信息没有加载成功，每5秒自动重试一次
+            const autoRetryInterval = setInterval(() => {
+                if (userName.textContent === '加载中...' || userName.textContent === '获取信息失败') {
+                    console.log('用户信息尚未加载，自动重试...');
+                    fetchUserInfo();
+                } else {
+                    clearInterval(autoRetryInterval);
+                }
+            }, 5000);
+            
+            // 用于监听生成按钮的函数
+            function setupGenerateButtonListener() {
+                console.log("开始设置生成按钮监听器...");
+                
+                // 直接使用ID选择器查找按钮
+                const generateBtn = document.getElementById("txt2img_generate");
+                
+                if (generateBtn) {
+                    console.log("找到生成按钮，添加事件监听器");
+                    
+                    generateBtn.addEventListener("click", function() {
+                        console.log("生成按钮被点击，准备扣除积分");
+                        deductPoints(1); // 扣除1积分
+                    });
+                } else {
+                    console.log("未找到生成按钮，将在页面加载完成后再次尝试");
+                    
+                    // 设置一个轮询来检查按钮是否存在
+                    let checkCount = 0;
+                    const maxChecks = 10;
+                    
+                    const checkInterval = setInterval(function() {
+                        checkCount++;
+                        console.log(`第${checkCount}次检查生成按钮...`);
+                        
+                        const btn = document.getElementById("txt2img_generate");
+                        if (btn) {
+                            console.log("找到生成按钮，添加事件监听器");
+                            
+                            btn.addEventListener("click", function() {
+                                console.log("生成按钮被点击，准备扣除积分");
+                                deductPoints(1);
+                            });
+                            
+                            clearInterval(checkInterval);
+                        } else if (checkCount >= maxChecks) {
+                            console.log("达到最大检查次数，停止检查");
+                            clearInterval(checkInterval);
+                            
+                            // 尝试在iframe中查找按钮
+                            try {
+                                const iframes = document.querySelectorAll("iframe");
+                                console.log(`找到${iframes.length}个iframe，尝试在iframe中查找按钮`);
+                                
+                                iframes.forEach((iframe, index) => {
+                                    try {
+                                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                        const iframeBtn = iframeDoc.getElementById("txt2img_generate");
+                                        
+                                        if (iframeBtn) {
+                                            console.log(`在iframe ${index} 中找到生成按钮`);
+                                            
+                                            iframeBtn.addEventListener("click", function() {
+                                                console.log("iframe中的生成按钮被点击");
+                                                deductPoints(1);
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.error(`访问iframe ${index} 时出错:`, e);
+                                    }
+                                });
+                            } catch (e) {
+                                console.error("尝试在iframe中查找按钮时出错:", e);
+                            }
+                            
+                            // 添加全局点击监听器作为备用方案
+                            console.log("添加全局点击事件监听器作为备用方案");
+                            document.addEventListener("click", function(e) {
+                                // 检查被点击的元素或其父元素是否是生成按钮
+                                let target = e.target;
+                                while (target != null) {
+                                    if (target.id === "txt2img_generate" || 
+                                        (target.classList && target.classList.contains("primary") && 
+                                         target.innerText && target.innerText.includes("生成"))) {
+                                        console.log("通过全局监听器检测到生成按钮被点击");
+                                        deductPoints(1);
+                                        break;
+                                    }
+                                    target = target.parentElement;
+                                }
+                            });
+                        }
+                    }, 1000);
+                }
+                
+                // 检查特定按钮选择器
+                const alternativeSelectors = [
+                    ".gradio-button.primary[id='txt2img_generate']",
+                    "button[id='txt2img_generate']",
+                    "button.primary.gradio-button",
+                    ".generate-box button.primary",
+                    ".tab-content button.primary"
+                ];
+                
+                alternativeSelectors.forEach(selector => {
+                    const btns = document.querySelectorAll(selector);
+                    if (btns.length > 0) {
+                        console.log(`使用选择器 "${selector}" 找到 ${btns.length} 个潜在的生成按钮`);
+                        
+                        btns.forEach((btn, i) => {
+                            console.log(`为选择器 "${selector}" 的按钮 ${i} 添加事件监听器`);
+                            btn.addEventListener("click", function() {
+                                console.log(`选择器 "${selector}" 的按钮 ${i} 被点击`);
+                                deductPoints(1);
+                            });
+                        });
+                    }
+                });
+            }
+            
+            // 积分扣除函数
+            async function deductPoints(points) {
+                try {
+                    console.log(`准备扣除 ${points} 积分...`);
+                    
+                    const response = await fetch('/deduct_points', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ points: points }),
+                        credentials: 'include'
+                    });
+                    
+                    const data = await response.json();
+                    console.log('积分扣除响应:', data);
+                    
+                    if (data.success) {
+                        console.log(`积分扣除成功，剩余积分: ${data.points}`);
+                        // 更新显示的积分
+                        const pointsElement = document.getElementById('user-points');
+                        if (pointsElement) {
+                            pointsElement.textContent = data.points;
+                        }
+                        
+                        // 显示成功消息
+                        showToast('积分已扣除', 'success');
+                    } else {
+                        console.error('积分扣除失败:', data.error);
+                        showToast(data.error || '积分扣除失败', 'error');
+                    }
+                } catch (error) {
+                    console.error('积分扣除请求出错:', error);
+                    showToast('网络错误，请重试', 'error');
+                }
+            }
+            
+            // 在DOM加载完成后设置事件监听器
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("DOM已加载，初始化事件监听器");
+                
+                // 设置生成按钮监听器
+                setupGenerateButtonListener();
+                
+                // 由于Gradio界面可能在加载完成后动态生成，我们也在窗口加载完成后再次尝试
+                window.addEventListener('load', function() {
+                    console.log("窗口已完全加载，再次尝试设置生成按钮监听器");
+                    setTimeout(setupGenerateButtonListener, 2000); // 等待2秒后再次尝试
+                });
+                
+                // 监听可能的动态内容变化
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.addedNodes.length) {
+                            console.log("检测到DOM变化，再次尝试设置生成按钮监听器");
+                            setTimeout(setupGenerateButtonListener, 500);
+                        }
+                    });
+                });
+                
+                // 开始观察文档的变化
+                observer.observe(document.body, { childList: true, subtree: true });
+            });
+        });
+    </script>
+</body>
+</html> 
